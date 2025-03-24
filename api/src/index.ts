@@ -26,7 +26,7 @@ const dbConfig = {
   waitForConnections:true,
   queueLimit:0,
 }
-const pool =mysql.createPool(dbConfig)
+const pool = mysql.createPool(dbConfig)
 
 testConnexion()
 
