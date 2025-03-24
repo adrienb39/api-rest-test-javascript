@@ -40,3 +40,16 @@ async function  testConnexion() {
     console.log("Bonsoir non")
   }
 }
+
+async function getFilms() {
+  try{
+    const resultat =await pool.query('SELECT * FROM films')
+    console.log(resultat) // Afficher dans la console la liste des films
+    return(resultat[0]) // Retourne une promesse
+  }catch (error) {
+    console.log('Erreur lors de la récupération des données')
+    throw error // Retourner donc une promesse qui ne va pas être résolue
+  }
+}
+
+getFilms()
