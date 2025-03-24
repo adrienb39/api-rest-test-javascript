@@ -45,7 +45,7 @@ async function getFilms() {
   try{
     const resultat =await pool.query('SELECT * FROM films')
     console.log(resultat) // Afficher dans la console la liste des films
-    return(resultat[0]) // Retourne une promesse
+    return([resultat[0]]) // Retourne une promesse
   }catch (error) {
     console.log('Erreur lors de la récupération des données')
     throw error // Retourner donc une promesse qui ne va pas être résolue
@@ -53,3 +53,13 @@ async function getFilms() {
 }
 
 getFilms()
+
+app.get('/films', async (c) => {
+  try {
+    const films = await getFilms(); // Appel à votre fonction asynchrone
+    return c.json(films); // Renvoi des données sous forme de JSON
+  } catch (error) {
+    console.error(error);
+    return c.json({ message: 'Une erreur est survenue lors de la récupération des films.' }, 500);
+  }
+});
