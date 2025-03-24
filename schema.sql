@@ -46,7 +46,7 @@ CREATE TABLE utilisateurs (
   prenom_utilisateur varchar(100) NOT NULL,
   nom_utilisateur varchar(50) NOT NULL,
   role_id INT NOT NULL,
-  FOREIGN KEY (role_id) REFERENCES roles(id)
+  FOREIGN KEY (role_id) REFERENCES roles(id_role)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Insérer les genres
