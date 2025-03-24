@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "hono": "^4.7.5",
     "mysql2": "^3.14.0"
   }
 }
