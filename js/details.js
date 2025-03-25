@@ -30,7 +30,7 @@ function extractYear(dateString) {
 async function loadFilmDetails() {
     const filmDetailsContainer = document.getElementById('film-details-container');
     const filmId = getUrlParameter('id');
-    
+
     // Si aucun ID n'est fourni, afficher un message d'erreur
     if (!filmId) {
         filmDetailsContainer.innerHTML = `
@@ -41,23 +41,23 @@ async function loadFilmDetails() {
         `;
         return;
     }
-    
+
     try {
         // Appel à l'API pour récupérer les détails du film
         const response = await fetch(`${API_BASE_URL}/films/${filmId}`);
-        
+
         // Si la réponse n'est pas OK, lancer une erreur
         if (!response.ok) {
             throw new Error(`Erreur HTTP: ${response.status}`);
         }
-        
+
         // Convertir la réponse en JSON
         const data = await response.json();
-        
+
         // Vérifier si le film existe
         if (data.status === 'success' && data.data) {
             const film = data.data;
-            
+
             // Créer le contenu HTML pour afficher les détails du film
             filmDetailsContainer.innerHTML = `
                 <div class="mb-4">
@@ -98,6 +98,7 @@ async function loadFilmDetails() {
                     </div>
                 </div>
             `;
+            loadFilmSeances(filmId);
         } else {
             // Film non trouvé
             filmDetailsContainer.innerHTML = `
@@ -119,5 +120,48 @@ async function loadFilmDetails() {
     }
 }
 
+async function loadFilmSeances(filmId) {
+    const seancesContainer = document.getElementById('seances-container');
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/films/${filmId}/seances`);
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.status === 'success' && data.data && data.data.length > 0) {
+            data.data.forEach(seance => {
+                const seanceItem = document.createElement('div');
+                seanceItem.className = 'seance-item';
+                seanceItem.innerHTML = `
+                    <p><strong>Place disponible :</strong> ${seance.places_disponibles}</p>
+                    <div class="row">
+                        <p class="col-md-2"><strong>Date :</strong> ${formatDate(seance.date)}</p>
+                        <p class="col-md-2"><strong>Heure :</strong> ${seance.heure}</p>
+                    </div>
+                    <hr>
+                `;
+                seancesContainer.appendChild(seanceItem);
+            });
+        } else {
+            seancesContainer.innerHTML = `
+                <div class="alert alert-info" role="alert">
+                    Aucune séance disponible pour ce film.
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des séances:', error);
+        seancesContainer.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                Erreur: Impossible de se connecter à l'API.
+            </div>
+        `;
+    }
+}
+
 // Charger les détails du film au chargement de la page
-document.addEventListener('DOMContentLoaded', loadFilmDetails); 
+document.addEventListener('DOMContentLoaded', loadFilmDetails);
