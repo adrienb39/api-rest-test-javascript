@@ -63,4 +63,69 @@ async function loadFilms() {
 }
 
 // Charger les films au chargement de la page
-document.addEventListener('DOMContentLoaded', loadFilms); 
+document.addEventListener('DOMContentLoaded', loadFilms);
+async function afficherGenre() {
+    const genreForm = document.getElementById('genre'); // Menu déroulant (select)
+    try {
+        // Appel à l'API pour récupérer les genres
+        const response = await fetch(`http://localhost:3000/api/genres`);
+
+        // Vérifier si la réponse est OK
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        // Convertir la réponse en JSON
+        const data = await response.json();
+
+        // Vérifier si des genres sont disponibles
+        if (data.status === 'success' && data.data && data.data.length > 0) {
+            // Parcourir les genres et les ajouter au menu déroulant
+            data.data.forEach(genre => {
+                const optionElement = document.createElement('option');
+                optionElement.value = genre.id; // Utilisez l'ID du genre comme valeur
+                optionElement.textContent = genre.nom; // Texte affiché dans le menu
+                genreForm.appendChild(optionElement);
+            });
+        } else {
+            // Aucun genre disponible
+            genreForm.innerHTML = `
+                <option disabled selected>Aucun genre disponible</option>
+            `;
+        }
+    } catch (error) {
+        // Gérer les erreurs en cas de problème
+        console.error('Erreur lors du chargement des genres :', error);
+        genreForm.innerHTML = `
+            <option disabled selected>Erreur : Impossible de récupérer les genres</option>
+        `;
+    }
+}
+
+document.addEventListener('DOMContentLoaded',afficherGenre)
+
+const form = document.getElementById('registrationForm');
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = {
+        username: form.username.value,
+        email: form.email.value,
+        password: form.password.value,
+    };
+
+    try {
+        const response = await fetch('http://localhost:3000/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        const result = await response.text();
+        alert(result); // Affiche un message en fonction de la réponse du serveur
+    } catch (error) {
+        console.error('Erreur lors de l’envoi :', error);
+    }
+});
