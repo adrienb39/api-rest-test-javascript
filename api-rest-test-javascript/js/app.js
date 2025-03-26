@@ -129,3 +129,35 @@ form.addEventListener('submit', async (event) => {
         console.error('Erreur lors de l’envoi :', error);
     }
 });
+async function ajoutFilm() {
+    console.log('jotgped')
+    const film = {
+        titre: document.getElementById('titre').value,
+        realisateur:document.getElementById('realisateur').value,
+        duree:document.getElementById('duree'),
+        date:document.getElementById('date'),
+        image:document.getElementById('image').value,
+        genre:document.getElementById('genre').value,
+        description:document.getElementById('description').value
+    }
+    try {
+        const response = await fetch('/api/ajoutfilm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(film)
+        });
+        if (response.ok) {
+            const result = await response.json();
+            alert('Film ajouté avec succès : ' + result.message);
+        } else {
+            console.error('Erreur lors de l\'ajout :', response.status);
+            alert('Erreur lors de l\'ajout du film.');
+        }
+        console.log(response)
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi des données');
+    }
+}
+document.addEventListener('DOMContentLoaded',ajoutFilm)
